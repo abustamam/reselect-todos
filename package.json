@@ -2,6 +2,7 @@
   "name": "reselect-course",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://abustamam.github.io/reselect-todos",
   "dependencies": {
     "lodash": "^4.17.4",
     "react": "^16.0.0",
@@ -13,6 +14,8 @@
     "uuid": "^3.1.0"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
@@ -24,6 +27,7 @@
     "trailingComma": "all"
   },
   "devDependencies": {
+    "gh-pages": "^1.0.0",
     "prettier": "^1.7.4"
   }
 }
