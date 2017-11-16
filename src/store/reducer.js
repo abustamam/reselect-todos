@@ -1,13 +1,17 @@
 import camelCase from 'lodash/camelCase'
+import reduce from 'lodash/fp/reduce'
+import set from 'lodash/fp/set'
 import { combineReducers } from 'redux'
-
-const reducers = {}
 
 const req = require.context('.', true, /\.\/.+\/reducer\.js$/)
 
-req.keys().forEach(key => {
-  const storeName = camelCase(key.replace(/\.\/(.+)\/.+$/, '$1'))
-  reducers[storeName] = req(key).default
-})
+const reducers = reduce(
+  (acc, key) => {
+    const storeName = camelCase(key.replace(/\.\/(.+)\/.+$/, '$1'))
+    return set(storeName, req(key).default, acc)
+  },
+  {},
+  req.keys(),
+)
 
 export default combineReducers(reducers)
