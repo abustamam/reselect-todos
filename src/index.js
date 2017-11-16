@@ -4,7 +4,7 @@ import { Provider } from 'react-redux'
 import 'todomvc-app-css/index.css'
 
 import registerServiceWorker from './registerServiceWorker'
-import App from './containers/App'
+import App from './App'
 import configureStore from './store/configureStore'
 
 const store = configureStore()
