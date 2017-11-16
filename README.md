@@ -11,6 +11,15 @@ npm i
 npm start
 ```
 
+### Branches
+- master: the original ShoppingMVC
+- with-reselect: maps all mapStateToProps to use reselect
+
+### Run tests
+```
+npm run test
+```
+
 ---
 
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
