@@ -1,6 +1,9 @@
 import React from 'react'
-import { createRenderer } from 'react-test-renderer/shallow'
+import { shallow } from 'enzyme'
+
 import TodoTextInput from '.'
+
+const wrap = (props = {}) => shallow(<TodoTextInput {...props} />)
 
 const setup = propOverrides => {
   const props = Object.assign(
@@ -14,67 +17,59 @@ const setup = propOverrides => {
     propOverrides,
   )
 
-  const renderer = createRenderer()
+  const wrapper = wrap(props)
 
-  renderer.render(<TodoTextInput {...props} />)
-
-  const output = renderer.getRenderOutput()
-
-  return {
-    props: props,
-    output: output,
-    renderer: renderer,
-  }
+  return { props, wrapper }
 }
 
 describe('components', () => {
   describe('TodoTextInput', () => {
     it('should render correctly', () => {
-      const { output } = setup()
-      expect(output.props.placeholder).toEqual('What needs to be done?')
-      expect(output.props.value).toEqual('Use Redux')
-      expect(output.props.className).toEqual('')
+      const { wrapper } = setup()
+      expect(wrapper.props().placeholder).toEqual('What needs to be done?')
+      expect(wrapper.props().value).toEqual('Use Redux')
+      expect(wrapper.props().className).toEqual('')
     })
 
     it('should render correctly when editing=true', () => {
-      const { output } = setup({ editing: true })
-      expect(output.props.className).toEqual('edit')
+      const { wrapper } = setup({ editing: true })
+      expect(wrapper.props().className).toEqual('edit')
     })
 
     it('should render correctly when newTodo=true', () => {
-      const { output } = setup({ newTodo: true })
-      expect(output.props.className).toEqual('new-todo')
+      const { wrapper } = setup({ newTodo: true })
+      expect(wrapper.props().className).toEqual('new-todo')
     })
 
     it('should update value on change', () => {
-      const { output, renderer } = setup()
-      output.props.onChange({ target: { value: 'Use Radox' } })
-      const updated = renderer.getRenderOutput()
-      expect(updated.props.value).toEqual('Use Radox')
+      const { wrapper, renderer } = setup()
+      wrapper.props().onChange({ target: { value: 'Use Radox' } })
+      wrapper.update()
+      expect(wrapper.props().value).toEqual('Use Radox')
     })
 
     it('should call onSave on return key press', () => {
-      const { output, props } = setup()
-      output.props.onKeyDown({ which: 13, target: { value: 'Use Redux' } })
+      const { wrapper, props } = setup()
+      wrapper.props().onKeyDown({ which: 13, target: { value: 'Use Redux' } })
       expect(props.onSave).toBeCalledWith('Use Redux')
     })
 
     it('should reset state on return key press if newTodo', () => {
-      const { output, renderer } = setup({ newTodo: true })
-      output.props.onKeyDown({ which: 13, target: { value: 'Use Redux' } })
-      const updated = renderer.getRenderOutput()
-      expect(updated.props.value).toEqual('')
+      const { wrapper, renderer } = setup({ newTodo: true })
+      wrapper.props().onKeyDown({ which: 13, target: { value: 'Use Redux' } })
+      wrapper.update()
+      expect(wrapper.props().value).toEqual('')
     })
 
     it('should call onSave on blur', () => {
-      const { output, props } = setup()
-      output.props.onBlur({ target: { value: 'Use Redux' } })
+      const { wrapper, props } = setup()
+      wrapper.props().onBlur({ target: { value: 'Use Redux' } })
       expect(props.onSave).toBeCalledWith('Use Redux')
     })
 
     it('shouldnt call onSave on blur if newTodo', () => {
-      const { output, props } = setup({ newTodo: true })
-      output.props.onBlur({ target: { value: 'Use Redux' } })
+      const { wrapper, props } = setup({ newTodo: true })
+      wrapper.props().onBlur({ target: { value: 'Use Redux' } })
       expect(props.onSave).not.toBeCalled()
     })
   })

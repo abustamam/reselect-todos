@@ -1,10 +1,12 @@
 import React from 'react'
-import { createRenderer } from 'react-test-renderer/shallow'
+import { shallow, mount } from 'enzyme'
 
 import TodoItem from './../TodoItem'
 import Footer from './../Footer'
 import MainSection from '.'
-import { SHOW_ALL, SHOW_COMPLETED } from './../../constants/TodoFilters'
+// import { SHOW_ALL, SHOW_COMPLETED } from './../../constants/TodoFilters'
+
+const wrap = (props = {}) => shallow(<MainSection {...props} />)
 
 const setup = propOverrides => {
   const props = Object.assign(
@@ -21,47 +23,48 @@ const setup = propOverrides => {
           id: 1,
         },
       ],
-      actions: {
-        editTodo: jest.fn(),
-        deleteTodo: jest.fn(),
-        completeTodo: jest.fn(),
-        completeAll: jest.fn(),
-        clearCompleted: jest.fn(),
-      },
+      filter: 'all',
+      changeFilter: jest.fn(),
+      editTodo: jest.fn(),
+      deleteTodo: jest.fn(),
+      completeTodo: jest.fn(),
+      completeAll: jest.fn(),
+      clearCompleted: jest.fn(),
     },
     propOverrides,
   )
 
-  const renderer = createRenderer()
-  renderer.render(<MainSection {...props} />)
-  const output = renderer.getRenderOutput()
+  const wrapper = wrap(props)
 
   return {
-    props: props,
-    output: output,
-    renderer: renderer,
+    props,
+    wrapper,
   }
 }
 
 describe('components', () => {
   describe('MainSection', () => {
     it('should render container', () => {
-      const { output } = setup()
-      expect(output.type).toBe('section')
-      expect(output.props.className).toBe('main')
+      const { wrapper } = setup()
+      expect(wrapper.type()).toBe('section')
+      expect(wrapper.hasClass('main')).toBe(true)
     })
 
     describe('toggle all input', () => {
       it('should render', () => {
-        const { output } = setup()
-        const [toggle] = output.props.children[0].props.children
-        expect(toggle.type).toBe('input')
-        expect(toggle.props.type).toBe('checkbox')
-        expect(toggle.props.checked).toBe(false)
+        const { wrapper } = setup()
+        const [toggle] = wrapper
+          .children()
+          .first()
+          .children()
+          .map(a => a)
+        expect(toggle.type()).toBe('input')
+        expect(toggle.props().type).toBe('checkbox')
+        expect(toggle.props().checked).toBe(false)
       })
 
       it('should be checked if all todos completed', () => {
-        const { output } = setup({
+        const { wrapper } = setup({
           todos: [
             {
               text: 'Use Redux',
@@ -70,65 +73,75 @@ describe('components', () => {
             },
           ],
         })
-        const [toggle] = output.props.children[0].props.children
-        expect(toggle.props.checked).toBe(true)
+        const [toggle] = wrapper
+          .children()
+          .first()
+          .children()
+          .map(a => a)
+        expect(toggle.props().checked).toBe(true)
       })
 
       it('should call completeAll on change', () => {
-        const { output, props } = setup()
-        const [, label] = output.props.children[0].props.children
-        label.props.onClick({})
-        expect(props.actions.completeAll).toBeCalled()
+        const { wrapper, props } = setup()
+        const [, label] = wrapper
+          .children()
+          .first()
+          .children()
+          .map(a => a)
+        label.props().onClick({})
+        expect(props.completeAll).toBeCalled()
       })
     })
 
     describe('footer', () => {
       it('should render', () => {
-        const { output } = setup()
-        const [, , footer] = output.props.children
-        expect(footer.type).toBe(Footer)
-        expect(footer.props.completedCount).toBe(1)
-        expect(footer.props.activeCount).toBe(1)
-        expect(footer.props.filter).toBe(SHOW_ALL)
+        const { wrapper } = setup()
+        const [, , footer] = wrapper.children().map(a => a)
+        expect(footer.type()).toBe(Footer)
+        expect(footer.props().completedCount).toBe(1)
+        expect(footer.props().activeCount).toBe(1)
+        expect(footer.props().filter).toBe('all')
       })
 
       it('onShow should set the filter', () => {
-        const { output, renderer } = setup()
-        const [, , footer] = output.props.children
-        footer.props.onShow(SHOW_COMPLETED)
-        const updated = renderer.getRenderOutput()
-        const [, , updatedFooter] = updated.props.children
-        expect(updatedFooter.props.filter).toBe(SHOW_COMPLETED)
+        const { wrapper, props } = setup()
+        const [, , footer] = wrapper.children().map(a => a)
+        footer.props().onShow('completed')
+        expect(props.changeFilter.mock.calls).toEqual([['completed']])
       })
 
       it('onClearCompleted should call clearCompleted', () => {
-        const { output, props } = setup()
-        const [, , footer] = output.props.children
-        footer.props.onClearCompleted()
-        expect(props.actions.clearCompleted).toBeCalled()
+        const { wrapper, props } = setup()
+        const [, , footer] = wrapper.children().map(a => a)
+        footer.props().onClearCompleted()
+        expect(props.clearCompleted).toBeCalled()
       })
     })
 
     describe('todo list', () => {
       it('should render', () => {
-        const { output, props } = setup()
-        const [, list] = output.props.children
-        expect(list.type).toBe('ul')
-        expect(list.props.children.length).toBe(2)
-        list.props.children.forEach((item, i) => {
-          expect(item.type).toBe(TodoItem)
-          expect(item.props.todo).toBe(props.todos[i])
+        const { wrapper, props } = setup()
+        const [, list] = wrapper.children().map(a => a)
+        expect(list.type()).toBe('ul')
+        expect(list.children().length).toBe(2)
+        list.children().forEach((item, i) => {
+          expect(item.type()).toBe(TodoItem)
+          expect(item.props().todo).toBe(props.todos[i])
         })
       })
 
       it('should filter items', () => {
-        const { output, renderer, props } = setup()
-        const [, , footer] = output.props.children
-        footer.props.onShow(SHOW_COMPLETED)
-        const updated = renderer.getRenderOutput()
-        const [, updatedList] = updated.props.children
-        expect(updatedList.props.children.length).toBe(1)
-        expect(updatedList.props.children[0].props.todo).toBe(props.todos[1])
+        const { wrapper, props } = setup()
+        const [, , footer] = wrapper.children().map(a => a)
+        const { wrapper: updatedWrapper } = setup({ filter: 'completed' })
+        const [, updatedList] = updatedWrapper.children().map(a => a)
+        expect(updatedList.children().length).toBe(1)
+        expect(
+          updatedList
+            .children()
+            .first()
+            .props().todo,
+        ).toEqual(props.todos[1])
       })
     })
   })

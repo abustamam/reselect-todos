@@ -16,4 +16,4 @@ const consoleMock = {
 }
 
 global.localStorage = localStorageMock
-global.console = consoleMock
+// global.console = consoleMock

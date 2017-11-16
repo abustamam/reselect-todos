@@ -13,7 +13,7 @@ const TODO_FILTERS = {
 export default class MainSection extends Component {
   static propTypes = {
     todos: PropTypes.array.isRequired,
-    filter: PropTypes.oneOf('all', 'active', 'completed').isRequired,
+    filter: PropTypes.oneOf(['all', 'active', 'completed']).isRequired,
     completeAll: PropTypes.func.isRequired,
     clearCompleted: PropTypes.func.isRequired,
     changeFilter: PropTypes.func.isRequired,

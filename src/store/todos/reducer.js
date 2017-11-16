@@ -18,7 +18,7 @@ const initialState = [
 export default function todos(state = initialState, action) {
   switch (action.type) {
     case ADD_TODO:
-      const toReturn = [
+      return [
         ...state,
         {
           id: state.reduce((maxId, todo) => Math.max(todo.id, maxId), -1) + 1,
@@ -26,10 +26,6 @@ export default function todos(state = initialState, action) {
           text: action.text,
         },
       ]
-
-      console.log({ toReturn })
-      return toReturn
-
     case DELETE_TODO:
       return state.filter(todo => todo.id !== action.id)
 
