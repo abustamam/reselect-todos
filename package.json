@@ -4,13 +4,19 @@
   "private": true,
   "homepage": "https://abustamam.github.io/reselect-todos",
   "dependencies": {
+    "classnames": "^2.2.5",
+    "enzyme": "^3.2.0",
+    "enzyme-adapter-react-16": "^1.1.0",
     "lodash": "^4.17.4",
+    "prop-types": "^15.6.0",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "react-redux": "^5.0.6",
     "react-scripts": "1.0.17",
+    "react-test-renderer": "^15.5.4",
     "redux": "^3.7.2",
     "reselect": "^3.0.1",
+    "todomvc-app-css": "^2.1.0",
     "uuid": "^3.1.0"
   },
   "scripts": {
@@ -28,6 +34,7 @@
   },
   "devDependencies": {
     "gh-pages": "^1.0.0",
-    "prettier": "^1.7.4"
+    "prettier": "^1.7.4",
+    "react-addons-test-utils": "^15.6.2"
   }
 }
