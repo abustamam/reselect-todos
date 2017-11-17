@@ -4,72 +4,64 @@ import PropTypes from 'prop-types'
 import TodoItem from './../TodoItem'
 import Footer from './../Footer'
 
-const TODO_FILTERS = {
-  all: () => true,
-  active: todo => !todo.completed,
-  completed: todo => todo.completed,
-}
-
 export default class MainSection extends Component {
   static propTypes = {
-    todos: PropTypes.array.isRequired,
     filter: PropTypes.oneOf(['all', 'active', 'completed']).isRequired,
+    filteredTodos: PropTypes.array.isRequired,
+    completedCount: PropTypes.number.isRequired,
+    count: PropTypes.number.isRequired,
+    activeCount: PropTypes.number.isRequired,
     completeAll: PropTypes.func.isRequired,
+    completeTodo: PropTypes.func.isRequired,
+    deleteTodo: PropTypes.func.isRequired,
     clearCompleted: PropTypes.func.isRequired,
     changeFilter: PropTypes.func.isRequired,
   }
 
-  renderToggleAll(completedCount) {
-    const { todos, completeAll } = this.props
-    if (todos.length > 0) {
-      return (
-        <span>
-          <input
-            className="toggle-all"
-            type="checkbox"
-            checked={completedCount === todos.length}
-          />
-          <label onClick={completeAll} />
-        </span>
-      )
-    }
-  }
-
-  renderFooter(completedCount) {
-    const { todos, filter, changeFilter, clearCompleted } = this.props
-    const activeCount = todos.length - completedCount
-
-    if (todos.length) {
-      return (
-        <Footer
-          completedCount={completedCount}
-          activeCount={activeCount}
-          filter={filter}
-          onClearCompleted={clearCompleted}
-          onShow={changeFilter}
-        />
-      )
-    }
-  }
-
   render() {
-    const { todos, filter, ...actions } = this.props
-
-    const filteredTodos = todos.filter(TODO_FILTERS[filter])
-    const completedCount = todos.reduce(
-      (count, todo) => (todo.completed ? count + 1 : count),
-      0,
-    )
+    const {
+      filter,
+      filteredTodos,
+      completedCount,
+      count,
+      activeCount,
+      completeAll,
+      clearCompleted,
+      changeFilter,
+      completeTodo,
+      deleteTodo,
+      editTodo,
+    } = this.props
 
     return (
       <section className="main">
-        {this.renderToggleAll(completedCount)}
+        {count && (
+          <span>
+            <input
+              className="toggle-all"
+              type="checkbox"
+              checked={activeCount === 0}
+            />
+            <label onClick={completeAll} />
+          </span>
+        )}
         <ul className="todo-list">
           {filteredTodos.map(todo => (
-            <TodoItem key={todo.id} todo={todo} {...actions} />
+            <TodoItem
+              key={todo.id}
+              {...{ todo, completeTodo, deleteTodo, editTodo }}
+            />
           ))}
         </ul>
-        {this.renderFooter(completedCount)}
+        {count && (
+          <Footer
+            completedCount={completedCount}
+            activeCount={activeCount}
+            filter={filter}
+            onClearCompleted={clearCompleted}
+            onShow={changeFilter}
+          />
+        )}
       </section>
     )
   }

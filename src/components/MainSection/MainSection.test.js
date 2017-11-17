@@ -11,7 +11,7 @@ const wrap = (props = {}) => shallow(<MainSection {...props} />)
 const setup = propOverrides => {
   const props = Object.assign(
     {
-      todos: [
+      filteredTodos: [
         {
           text: 'Use Redux',
           completed: false,
@@ -23,6 +23,9 @@ const setup = propOverrides => {
           id: 1,
         },
       ],
+      completedCount: 1,
+      activeCount: 1,
+      count: 2,
       filter: 'all',
       changeFilter: jest.fn(),
       editTodo: jest.fn(),
@@ -65,13 +68,16 @@ describe('components', () => {
 
       it('should be checked if all todos completed', () => {
         const { wrapper } = setup({
-          todos: [
+          filteredTodos: [
             {
               text: 'Use Redux',
               completed: true,
               id: 0,
             },
           ],
+          completedCount: 1,
+          activeCount: 0,
+          count: 1,
         })
         const [toggle] = wrapper
           .children()
@@ -126,22 +132,8 @@ describe('components', () => {
         expect(list.children().length).toBe(2)
         list.children().forEach((item, i) => {
           expect(item.type()).toBe(TodoItem)
-          expect(item.props().todo).toBe(props.todos[i])
+          expect(item.props().todo).toBe(props.filteredTodos[i])
         })
-      })
-
-      it('should filter items', () => {
-        const { wrapper, props } = setup()
-        const [, , footer] = wrapper.children().map(a => a)
-        const { wrapper: updatedWrapper } = setup({ filter: 'completed' })
-        const [, updatedList] = updatedWrapper.children().map(a => a)
-        expect(updatedList.children().length).toBe(1)
-        expect(
-          updatedList
-            .children()
-            .first()
-            .props().todo,
-        ).toEqual(props.todos[1])
       })
     })
   })

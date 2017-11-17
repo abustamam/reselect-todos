@@ -17,53 +17,42 @@ export default class Footer extends Component {
     onShow: PropTypes.func.isRequired,
   }
 
-  renderTodoCount() {
-    const { activeCount } = this.props
+  render() {
+    const {
+      completedCount,
+      onClearCompleted,
+      filter: selectedFilter,
+      onShow,
+      activeCount,
+    } = this.props
+
     const itemWord = activeCount === 1 ? 'item' : 'items'
 
     return (
-      <span className="todo-count">
-        <strong>{activeCount || 'No'}</strong> {itemWord} left
-      </span>
-    )
-  }
-
-  renderFilterLink(filter) {
-    const title = FILTER_TITLES[filter]
-    const { filter: selectedFilter, onShow } = this.props
-
-    return (
-      <a
-        className={classnames({ selected: filter === selectedFilter })}
-        style={{ cursor: 'pointer' }}
-        onClick={() => onShow(filter)}
-      >
-        {title}
-      </a>
-    )
-  }
-
-  renderClearButton() {
-    const { completedCount, onClearCompleted } = this.props
-    if (completedCount > 0) {
-      return (
-        <button className="clear-completed" onClick={onClearCompleted}>
-          Clear completed
-        </button>
-      )
-    }
-  }
-
-  render() {
-    return (
       <footer className="footer">
-        {this.renderTodoCount()}
+        <span className="todo-count">
+          <strong>{activeCount || 'No'}</strong> {itemWord} left
+        </span>
         <ul className="filters">
           {['all', 'active', 'completed'].map(filter => (
-            <li key={filter}>{this.renderFilterLink(filter)}</li>
+            <li key={filter}>
+              <a
+                className={classnames({
+                  selected: filter === selectedFilter,
+                })}
+                style={{ cursor: 'pointer' }}
+                onClick={() => onShow(filter)}
+              >
+                {FILTER_TITLES[filter]}
+              </a>
+            </li>
           ))}
         </ul>
-        {this.renderClearButton()}
+        {completedCount && (
+          <button className="clear-completed" onClick={onClearCompleted}>
+            Clear completed
+          </button>
+        )}
       </footer>
     )
   }
