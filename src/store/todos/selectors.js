@@ -1,5 +1,5 @@
 import { createSelector, createStructuredSelector } from 'reselect'
-import reduce from 'lodash/fp/reduce'
+// import reduce from 'lodash/fp/reduce'
 
 import { getFilter } from './../filter/selectors'
 
