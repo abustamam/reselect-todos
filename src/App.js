@@ -6,7 +6,8 @@ import MainSection from './containers/MainSection'
 const App = () => (
   <div>
     <Header />
-    <MainSection />
+    <MainSection listId="1" />
+    <MainSection listId="2" />
   </div>
 )
 
