@@ -10,10 +10,11 @@ import {
   getFilteredTodos,
   getCompletedCount,
   getActiveCount,
+  makeMapStateToPropsWithProps,
 } from './../store/todos/selectors'
 import MainSection from './../components/MainSection'
 
-const mapStateToProps = createStructuredSelector({
+export const mapStateToProps = createStructuredSelector({
   filter: getFilter,
   count: getTodosCount,
   activeCount: getActiveCount,
